@@ -24,7 +24,11 @@ class LinkedList{
       length = 1;
     }
 
-    void AppendList(int value){
+    int getLenght(){
+      return length;
+    }
+
+    void appendList(int value){
       Node *newNode = new Node(value);
       if(length == 0){
         head = newNode;
@@ -37,7 +41,7 @@ class LinkedList{
       length++;
     }
 
-    void PrintList(){
+    void printList(){
       Node *temp = head;
       while(temp){
         cout << temp->value << " ";
@@ -46,14 +50,13 @@ class LinkedList{
       cout << endl;
     }
 
-    void DeleteLast(){
+    void deleteLast(){
       if(length == 0){
         return ;
       }
       if(length == 1){
         head = nullptr;
         tail = nullptr;
-        length--;
       }
       else{
         Node *pre = head;
@@ -64,26 +67,25 @@ class LinkedList{
         }
         tail = pre;
         tail->next = nullptr;
-        length--;
         delete temp;
       }
+      length--;
     }
 
-    void PrependList(int value){
+    void prependList(int value){
       Node *newNode = new Node(value);
       if(length == 0){
         head = newNode;
         tail = newNode;
-        length++;
       }
       else{
         newNode->next = head;
         head = newNode;
-        length++;
       }
+      length++;
     }
 
-    void DeleteFirst(){
+    void deleteFirst(){
       if(length == 0){
         return;
       }
@@ -91,11 +93,11 @@ class LinkedList{
       if(length == 1){
         head = nullptr;
         tail = nullptr;
-        length--;
       }
       else{
         head = head->next;
       }
+      length--;
       delete temp;
     }
 
@@ -123,6 +125,64 @@ class LinkedList{
         temp->value = value;
       }
     }
+
+    bool insertNode(int index, int value){
+      if(index < 0 || index > length){
+        return false;
+      }
+      if(index == 0){
+        prependList(value);
+        return true;
+      }
+      if(index == length){
+        appendList(value);
+        return true;
+      }
+      Node *newNode = new Node(value);
+      Node *temp = head;
+      for(int i = 0; i < index - 1; i++){
+        temp = temp->next;
+      }
+      newNode->next = temp->next;
+      temp->next = newNode;
+      length++;
+      return true;
+    }
+
+    void deleteNode(int index){
+      if(index < 0 || index > length){
+        return;
+      }
+      if(index == 0){
+        return deleteFirst();
+      }
+      if(index == length){
+        return deleteLast();
+      }
+      Node *prev = head;
+      for(int i = 0; i < index - 1; i++){
+        prev = prev->next;
+      }
+      Node *temp = prev->next;
+      prev->next = temp->next;
+      delete temp;
+      length--;
+    }
+
+    void reverseList(){
+      Node *temp = head;
+      head = tail;
+      tail = temp;
+      Node *after = temp->next;
+      Node *before = nullptr;
+
+      for(int i = 0; i < length; i++){
+        after = temp->next;
+        temp->next = before;
+        before = temp;
+        temp = after;
+      }
+    }
 };
 
 int main(){
@@ -130,30 +190,50 @@ int main(){
   LinkedList list(100);
 
   // Append List
-  list.AppendList(200);
-  list.AppendList(300);
-  list.AppendList(400);
-  list.AppendList(500);
+  list.appendList(200);
+  list.appendList(300);
+  list.appendList(400);
+  list.appendList(500);
 
   //Print List
-  list.PrintList();
+  list.printList();
 
   // Delete Last Node
-  list.DeleteLast();
-  list.PrintList();
+  list.deleteLast();
+  list.printList();
 
   // Prepend list
-  list.PrependList(140);
-  list.PrintList();
+  list.prependList(140);
+  list.printList();
 
   // Delete First Node
-  list.DeleteFirst();
-  list.PrintList();
+  list.deleteFirst();
+  list.printList();
 
+  // Get Value by index
   cout << "Value at index 2 : " << list.getValue(2) << endl;
 
+  // Set Value by index
   list.setValue(1, 4000);
-  list.PrintList();
+  list.printList();
 
+  // Insert new node at index
+  list.insertNode(2, 1000);
+  list.printList();
+
+  // Delete Node at index
+  list.deleteNode(3);
+  list.printList();
+
+  // Reverse the linkedlist
+  cout << "LL before reverse():" << endl;
+  list.printList();
+
+  list.reverseList();
+
+  cout << "LL after reverse():\n";
+  list.printList();  
+
+  cout << list.getLenght() << endl;
   return 0;
 }
